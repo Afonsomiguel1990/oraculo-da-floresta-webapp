@@ -1,0 +1,375 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Georgia', serif;
+    background: linear-gradient(135deg, #1a3a2e, #16423c, #0f2027);
+    min-height: 100vh;
+    color: white;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+#app {
+    position: relative;
+    min-height: 100vh;
+}
+
+/* Estados base */
+.state {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+}
+
+.state.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Loading State */
+.loading-container {
+    text-align: center;
+}
+
+.mystical-loader {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 2rem;
+    position: relative;
+}
+
+.leaf-spinner {
+    width: 100%;
+    height: 100%;
+    border: 3px solid rgba(144, 238, 144, 0.3);
+    border-top: 3px solid #90EE90;
+    border-radius: 50%;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-container h2 {
+    color: #90EE90;
+    font-size: 1.5rem;
+    font-weight: normal;
+}
+
+/* Code Input State */
+.code-container {
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(144, 238, 144, 0.3);
+}
+
+.header h1 {
+    font-size: 2rem;
+    color: #90EE90;
+    margin-bottom: 0.5rem;
+}
+
+.header p {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2rem;
+}
+
+.code-input-form {
+    margin-bottom: 2rem;
+}
+
+#code-input {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.2rem;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(144, 238, 144, 0.5);
+    border-radius: 10px;
+    color: white;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-family: 'Courier New', monospace;
+}
+
+#code-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#code-input:focus {
+    outline: none;
+    border-color: #90EE90;
+    box-shadow: 0 0 10px rgba(144, 238, 144, 0.3);
+}
+
+.action-btn {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    min-width: 150px;
+}
+
+.action-btn.primary {
+    background: #228B22;
+    color: white;
+}
+
+.action-btn.primary:hover {
+    background: #32CD32;
+    transform: translateY(-2px);
+}
+
+.action-btn.secondary {
+    background: rgba(144, 238, 144, 0.2);
+    color: #90EE90;
+    border: 1px solid #90EE90;
+}
+
+.action-btn.secondary:hover {
+    background: rgba(144, 238, 144, 0.3);
+}
+
+.action-btn.tertiary {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.action-btn.tertiary:hover {
+    color: white;
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.code-instructions {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* Prophecy State */
+.prophecy-container {
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+}
+
+.prophecy-header {
+    margin-bottom: 2rem;
+}
+
+.prophecy-header h1 {
+    font-size: 2.5rem;
+    color: #90EE90;
+    margin-bottom: 0.5rem;
+}
+
+#archetype-name {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-style: italic;
+}
+
+.prophecy-image-container {
+    position: relative;
+    margin-bottom: 2rem;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+#prophecy-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    max-height: 70vh;
+    object-fit: contain;
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.prophecy-image-container:hover .image-overlay {
+    opacity: 1;
+}
+
+.prophecy-text {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    border-left: 4px solid #90EE90;
+}
+
+#prophecy-text-content {
+    font-size: 1.1rem;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.8;
+}
+
+.prophecy-code {
+    margin-bottom: 2rem;
+}
+
+#prophecy-code-display {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: rgba(144, 238, 144, 0.2);
+    color: #90EE90;
+    border-radius: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border: 1px solid rgba(144, 238, 144, 0.5);
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* Error State */
+.error-container {
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 100, 100, 0.3);
+}
+
+.error-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    animation: sway 3s ease-in-out infinite;
+}
+
+@keyframes sway {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+}
+
+.error-container h2 {
+    color: #FFB6C1;
+    margin-bottom: 1rem;
+}
+
+#error-message {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2rem;
+}
+
+.back-to-input {
+    margin-top: 1rem;
+}
+
+.text-btn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    font-size: 0.9rem;
+    text-decoration: underline;
+    font-family: inherit;
+}
+
+.text-btn:hover {
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .state {
+        padding: 1rem;
+    }
+    
+    .prophecy-header h1 {
+        font-size: 2rem;
+    }
+    
+    .action-buttons {
+        width: 100%;
+    }
+    
+    .action-btn {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+/* Animações de entrada */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.state.active .prophecy-container,
+.state.active .code-container,
+.state.active .error-container {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Efeitos de background */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(144, 238, 144, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(34, 139, 34, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 60% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 30%);
+    pointer-events: none;
+    z-index: -1;
+}
