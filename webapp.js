@@ -129,17 +129,21 @@ class ProphcyWebApp {
         // Atualizar elementos da interface
         document.getElementById('archetype-name').textContent = `Arquétipo: ${prophecy.archetype}`;
         document.getElementById('prophecy-text-content').textContent = prophecy.text;
-        document.getElementById('prophecy-code-display').textContent = prophecy.short_code;
         
         // Configurar imagem da profecia
         const imgContainer = document.querySelector('.prophecy-image-container');
         const img = document.getElementById('prophecy-image');
-        
-        // Mostrar placeholder enquanto carrega
-        this.showImagePlaceholder();
+        const generateSection = document.getElementById('generate-image-section');
         
         if (prophecy.story_image_url) {
             console.log('Carregando imagem:', prophecy.story_image_url);
+            
+            // Esconder seção de gerar imagem
+            generateSection.style.display = 'none';
+            
+            // Mostrar placeholder enquanto carrega
+            this.showImagePlaceholder();
+            
             img.src = prophecy.story_image_url;
             img.style.display = 'block';
             
@@ -150,12 +154,21 @@ class ProphcyWebApp {
             };
             
             img.onerror = () => {
-                console.error('Erro ao carregar imagem, tentando gerar nova');
-                this.generateProphecyImage(prophecy.id);
+                console.error('Erro ao carregar imagem');
+                this.hideImagePlaceholder();
+                // Mostrar botão para gerar nova imagem
+                generateSection.style.display = 'block';
+                imgContainer.style.display = 'none';
+                this.setState(STATES.PROPHECY);
             };
         } else {
-            console.log('Sem URL de imagem, gerando nova');
-            this.generateProphecyImage(prophecy.id);
+            console.log('Sem URL de imagem, mostrando botão para gerar');
+            
+            // Esconder container de imagem e mostrar botão de gerar
+            imgContainer.style.display = 'none';
+            generateSection.style.display = 'block';
+            
+            this.setState(STATES.PROPHECY);
         }
         
         // Atualizar meta tags para partilha
@@ -175,7 +188,7 @@ class ProphcyWebApp {
         if (!placeholder) {
             placeholder = document.createElement('div');
             placeholder.className = 'image-placeholder';
-            placeholder.innerHTML = 'Gerando a tua imagem mística...';
+            placeholder.innerHTML = 'Carregando a tua imagem mística...';
             imgContainer.appendChild(placeholder);
         }
         placeholder.style.display = 'flex';
@@ -192,6 +205,14 @@ class ProphcyWebApp {
     
     // Gerar imagem da profecia (chamar render-story)
     async generateProphecyImage(prophecyId) {
+        const generateSection = document.getElementById('generate-image-section');
+        const imgContainer = document.querySelector('.prophecy-image-container');
+        const generateBtn = document.getElementById('generate-image-btn');
+        
+        // Desativar botão e mostrar loading
+        generateBtn.disabled = true;
+        generateBtn.textContent = '✨ Gerando...';
+        
         try {
             console.log('Chamando render-story para prophecy_id:', prophecyId);
             
@@ -212,7 +233,14 @@ class ProphcyWebApp {
             console.log('Resposta do render-story:', result);
             
             if (result.image_url) {
-                // Atualizar imagem
+                // Esconder seção de gerar e mostrar imagem
+                generateSection.style.display = 'none';
+                imgContainer.style.display = 'block';
+                
+                // Mostrar placeholder enquanto carrega
+                this.showImagePlaceholder();
+                
+                // Carregar nova imagem
                 const img = document.getElementById('prophecy-image');
                 img.src = result.image_url;
                 img.style.display = 'block';
@@ -220,13 +248,18 @@ class ProphcyWebApp {
                 img.onload = () => {
                     console.log('Nova imagem carregada com sucesso');
                     this.hideImagePlaceholder();
-                    this.setState(STATES.PROPHECY);
+                    
+                    // Atualizar profecia com novo URL
+                    this.currentProphecy.story_image_url = result.image_url;
                 };
                 
                 img.onerror = () => {
                     console.error('Erro ao carregar nova imagem gerada');
                     this.hideImagePlaceholder();
-                    this.setState(STATES.PROPHECY);
+                    
+                    // Voltar a mostrar botão de gerar
+                    imgContainer.style.display = 'none';
+                    generateSection.style.display = 'block';
                 };
             } else {
                 throw new Error('Resposta não contém image_url');
@@ -234,8 +267,13 @@ class ProphcyWebApp {
             
         } catch (error) {
             console.error('Erro ao gerar imagem:', error);
-            this.hideImagePlaceholder();
-            this.setState(STATES.PROPHECY); // Mostrar mesmo sem imagem
+            
+            // Reativar botão
+            generateBtn.disabled = false;
+            generateBtn.textContent = '✨ Gerar Imagem Mística';
+            
+            // Mostrar mensagem de erro
+            alert('Erro ao gerar imagem. Tenta novamente.');
         }
     }
     
@@ -292,7 +330,7 @@ class ProphcyWebApp {
             // Criar link de download
             const link = document.createElement('a');
             link.href = this.currentProphecy.story_image_url;
-            link.download = `profecia-${this.currentProphecy.short_code}.svg`;
+            link.download = `profecia-${this.currentProphecy.archetype}.svg`;
             link.target = '_blank';
             
             // Trigger download
@@ -305,33 +343,6 @@ class ProphcyWebApp {
             
             // Fallback: abrir em nova tab
             window.open(this.currentProphecy.story_image_url, '_blank');
-        }
-    }
-    
-    // Partilhar profecia
-    async shareProphecy() {
-        if (!this.currentProphecy) return;
-        
-        const shareData = {
-            title: `A Minha Profecia: ${this.currentProphecy.archetype}`,
-            text: this.currentProphecy.text,
-            url: window.location.href
-        };
-        
-        try {
-            if (navigator.share) {
-                await navigator.share(shareData);
-            } else {
-                // Fallback para browsers sem Web Share API
-                const text = `${shareData.title}\n\n${shareData.text}\n\n${shareData.url}`;
-                await navigator.clipboard.writeText(text);
-                alert('Link copiado para a clipboard!');
-            }
-        } catch (error) {
-            console.error('Erro ao partilhar:', error);
-            // Fallback final
-            const text = `${shareData.title}\n\n${shareData.text}\n\n${shareData.url}`;
-            prompt('Copia este texto para partilhar:', text);
         }
     }
     
@@ -366,14 +377,11 @@ class ProphcyWebApp {
             this.downloadImage();
         });
         
-        // Botão de partilha
-        document.getElementById('share-btn').addEventListener('click', () => {
-            this.shareProphecy();
-        });
-        
-        // Botão "Nova Profecia"
-        document.getElementById('new-prophecy-btn').addEventListener('click', () => {
-            window.location.href = window.location.pathname; // Recarregar sem parâmetros
+        // Botão para gerar imagem
+        document.getElementById('generate-image-btn').addEventListener('click', () => {
+            if (this.currentProphecy) {
+                this.generateProphecyImage(this.currentProphecy.id);
+            }
         });
         
         // Botão "Tentar Novamente"
