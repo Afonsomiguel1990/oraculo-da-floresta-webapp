@@ -6,16 +6,52 @@
 
 body {
     font-family: 'Georgia', serif;
-    background: linear-gradient(135deg, #1a3a2e, #16423c, #0f2027);
+    background: linear-gradient(135deg, #0a1f1a, #1a3a2e, #16423c, #0f2027, #0a1f1a);
+    background-size: 400% 400%;
+    animation: mysticalGradient 15s ease infinite;
     min-height: 100vh;
     color: white;
     line-height: 1.6;
     overflow-x: hidden;
+    position: relative;
+}
+
+@keyframes mysticalGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 #app {
     position: relative;
     min-height: 100vh;
+    z-index: 2;
+}
+
+/* Partículas místicas flutuantes */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(2px 2px at 20px 30px, rgba(144, 238, 144, 0.4), transparent),
+        radial-gradient(2px 2px at 40px 70px, rgba(144, 238, 144, 0.3), transparent),
+        radial-gradient(1px 1px at 90px 40px, rgba(144, 238, 144, 0.5), transparent),
+        radial-gradient(1px 1px at 130px 80px, rgba(144, 238, 144, 0.4), transparent),
+        radial-gradient(2px 2px at 160px 30px, rgba(144, 238, 144, 0.3), transparent);
+    background-repeat: repeat;
+    background-size: 200px 100px;
+    animation: float 20s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes float {
+    0% { transform: translateY(100vh) rotate(0deg); }
+    100% { transform: translateY(-100vh) rotate(360deg); }
 }
 
 /* Estados base */
@@ -30,7 +66,7 @@ body {
     justify-content: center;
     padding: 1rem;
     opacity: 0;
-    transition: opacity 0.3s ease-in-out;
+    transition: opacity 0.5s ease-in-out;
     pointer-events: none;
 }
 
@@ -45,8 +81,8 @@ body {
 }
 
 .mystical-loader {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     margin: 0 auto 2rem;
     position: relative;
 }
@@ -54,10 +90,11 @@ body {
 .leaf-spinner {
     width: 100%;
     height: 100%;
-    border: 3px solid rgba(144, 238, 144, 0.3);
-    border-top: 3px solid #90EE90;
+    border: 4px solid rgba(144, 238, 144, 0.2);
+    border-top: 4px solid #90EE90;
     border-radius: 50%;
     animation: spin 2s linear infinite;
+    box-shadow: 0 0 20px rgba(144, 238, 144, 0.3);
 }
 
 @keyframes spin {
@@ -67,31 +104,49 @@ body {
 
 .loading-container h2 {
     color: #90EE90;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: normal;
+    text-shadow: 0 0 10px rgba(144, 238, 144, 0.5);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
 }
 
 /* Code Input State */
 .code-container {
-    max-width: 400px;
+    max-width: 450px;
     width: 100%;
     text-align: center;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 2rem;
-    border-radius: 20px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(144, 238, 144, 0.3);
+    background: rgba(0, 20, 15, 0.7);
+    padding: 2.5rem;
+    border-radius: 25px;
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(144, 238, 144, 0.3);
+    box-shadow: 
+        0 0 30px rgba(144, 238, 144, 0.2),
+        inset 0 0 30px rgba(144, 238, 144, 0.1);
 }
 
 .header h1 {
-    font-size: 2rem;
+    font-size: 2.5rem;
     color: #90EE90;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
+    text-shadow: 0 0 15px rgba(144, 238, 144, 0.6);
+    animation: glow 3s ease-in-out infinite;
+}
+
+@keyframes glow {
+    0%, 100% { text-shadow: 0 0 15px rgba(144, 238, 144, 0.6); }
+    50% { text-shadow: 0 0 25px rgba(144, 238, 144, 0.8); }
 }
 
 .header p {
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.9);
     margin-bottom: 2rem;
+    font-size: 1.1rem;
 }
 
 .code-input-form {
@@ -100,17 +155,18 @@ body {
 
 #code-input {
     width: 100%;
-    padding: 1rem;
-    font-size: 1.2rem;
+    padding: 1.2rem;
+    font-size: 1.3rem;
     text-align: center;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.3);
     border: 2px solid rgba(144, 238, 144, 0.5);
-    border-radius: 10px;
+    border-radius: 15px;
     color: white;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
     font-family: 'Courier New', monospace;
+    transition: all 0.3s ease;
 }
 
 #code-input::placeholder {
@@ -120,89 +176,118 @@ body {
 #code-input:focus {
     outline: none;
     border-color: #90EE90;
-    box-shadow: 0 0 10px rgba(144, 238, 144, 0.3);
+    box-shadow: 0 0 20px rgba(144, 238, 144, 0.4);
+    background: rgba(0, 0, 0, 0.5);
 }
 
 .action-btn {
-    padding: 1rem 2rem;
-    font-size: 1rem;
+    padding: 1.2rem 2.5rem;
+    font-size: 1.1rem;
     border: none;
-    border-radius: 10px;
+    border-radius: 15px;
     cursor: pointer;
     transition: all 0.3s ease;
     font-family: inherit;
     text-decoration: none;
     display: inline-block;
     text-align: center;
-    min-width: 150px;
+    min-width: 180px;
+    position: relative;
+    overflow: hidden;
+}
+
+.action-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.action-btn:hover::before {
+    left: 100%;
 }
 
 .action-btn.primary {
-    background: #228B22;
+    background: linear-gradient(135deg, #228B22, #32CD32);
     color: white;
+    box-shadow: 0 5px 15px rgba(34, 139, 34, 0.4);
 }
 
 .action-btn.primary:hover {
-    background: #32CD32;
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, #32CD32, #228B22);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(34, 139, 34, 0.6);
 }
 
 .action-btn.secondary {
     background: rgba(144, 238, 144, 0.2);
     color: #90EE90;
-    border: 1px solid #90EE90;
+    border: 2px solid #90EE90;
+    box-shadow: 0 0 15px rgba(144, 238, 144, 0.3);
 }
 
 .action-btn.secondary:hover {
     background: rgba(144, 238, 144, 0.3);
+    box-shadow: 0 0 25px rgba(144, 238, 144, 0.5);
 }
 
 .action-btn.tertiary {
     background: transparent;
-    color: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.8);
+    border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .action-btn.tertiary:hover {
     color: white;
-    border-color: rgba(255, 255, 255, 0.5);
+    border-color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .code-instructions {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.9rem;
-    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+    line-height: 1.6;
 }
 
 /* Prophecy State */
 .prophecy-container {
-    max-width: 500px;
+    max-width: 550px;
     width: 100%;
     text-align: center;
 }
 
 .prophecy-header {
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
 }
 
 .prophecy-header h1 {
-    font-size: 2.5rem;
+    font-size: 3rem;
     color: #90EE90;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
+    text-shadow: 0 0 20px rgba(144, 238, 144, 0.7);
+    animation: glow 3s ease-in-out infinite;
 }
 
 #archetype-name {
-    font-size: 1.2rem;
-    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.4rem;
+    color: rgba(255, 255, 255, 0.9);
     font-style: italic;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
 .prophecy-image-container {
     position: relative;
-    margin-bottom: 2rem;
-    border-radius: 20px;
+    margin-bottom: 2.5rem;
+    border-radius: 25px;
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 
+        0 15px 40px rgba(0, 0, 0, 0.6),
+        0 0 30px rgba(144, 238, 144, 0.3);
+    border: 2px solid rgba(144, 238, 144, 0.4);
 }
 
 #prophecy-image {
@@ -211,6 +296,11 @@ body {
     display: block;
     max-height: 70vh;
     object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.prophecy-image-container:hover #prophecy-image {
+    transform: scale(1.02);
 }
 
 .image-overlay {
@@ -219,7 +309,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.7);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -232,92 +322,133 @@ body {
 }
 
 .prophecy-text {
-    margin-bottom: 2rem;
-    padding: 1.5rem;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    border-left: 4px solid #90EE90;
+    margin-bottom: 2.5rem;
+    padding: 2rem;
+    background: rgba(0, 20, 15, 0.6);
+    border-radius: 20px;
+    border-left: 5px solid #90EE90;
+    backdrop-filter: blur(10px);
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.3),
+        inset 0 0 20px rgba(144, 238, 144, 0.1);
 }
 
 #prophecy-text-content {
-    font-size: 1.1rem;
+    font-size: 1.6rem;
     font-style: italic;
-    color: rgba(255, 255, 255, 0.9);
-    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.95);
+    line-height: 2;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+    font-weight: 400;
+    letter-spacing: 0.5px;
 }
 
 .prophecy-code {
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
 }
 
 #prophecy-code-display {
     display: inline-block;
-    padding: 0.5rem 1rem;
+    padding: 0.8rem 1.5rem;
     background: rgba(144, 238, 144, 0.2);
     color: #90EE90;
-    border-radius: 10px;
+    border-radius: 15px;
     font-family: 'Courier New', monospace;
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     font-weight: bold;
-    border: 1px solid rgba(144, 238, 144, 0.5);
+    border: 2px solid rgba(144, 238, 144, 0.5);
+    box-shadow: 0 0 15px rgba(144, 238, 144, 0.3);
+    letter-spacing: 2px;
 }
 
 .action-buttons {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.2rem;
     align-items: center;
 }
 
 /* Error State */
 .error-container {
-    max-width: 400px;
+    max-width: 450px;
     width: 100%;
     text-align: center;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 2rem;
-    border-radius: 20px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 100, 100, 0.3);
+    background: rgba(20, 0, 0, 0.7);
+    padding: 2.5rem;
+    border-radius: 25px;
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(255, 100, 100, 0.4);
+    box-shadow: 
+        0 0 30px rgba(255, 100, 100, 0.2),
+        inset 0 0 30px rgba(255, 100, 100, 0.1);
 }
 
 .error-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
+    font-size: 5rem;
+    margin-bottom: 1.5rem;
     animation: sway 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 10px rgba(255, 100, 100, 0.5));
 }
 
 @keyframes sway {
-    0%, 100% { transform: rotate(-5deg); }
-    50% { transform: rotate(5deg); }
+    0%, 100% { transform: rotate(-8deg); }
+    50% { transform: rotate(8deg); }
 }
 
 .error-container h2 {
     color: #FFB6C1;
-    margin-bottom: 1rem;
+    margin-bottom: 1.2rem;
+    font-size: 1.8rem;
+    text-shadow: 0 0 10px rgba(255, 182, 193, 0.5);
 }
 
 #error-message {
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.9);
     margin-bottom: 2rem;
+    font-size: 1.1rem;
 }
 
 .back-to-input {
-    margin-top: 1rem;
+    margin-top: 1.5rem;
 }
 
 .text-btn {
     background: none;
     border: none;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.7);
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 1rem;
     text-decoration: underline;
     font-family: inherit;
+    transition: all 0.3s ease;
 }
 
 .text-btn:hover {
     color: white;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+/* Image placeholder */
+.image-placeholder {
+    width: 100%;
+    height: 300px;
+    background: linear-gradient(135deg, rgba(144, 238, 144, 0.1), rgba(144, 238, 144, 0.2));
+    border: 2px dashed rgba(144, 238, 144, 0.4);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: rgba(144, 238, 144, 0.7);
+    font-size: 1.2rem;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.image-placeholder::before {
+    content: '🌲';
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    display: block;
 }
 
 /* Responsive */
@@ -327,7 +458,12 @@ body {
     }
     
     .prophecy-header h1 {
-        font-size: 2rem;
+        font-size: 2.2rem;
+    }
+    
+    #prophecy-text-content {
+        font-size: 1.3rem;
+        line-height: 1.8;
     }
     
     .action-buttons {
@@ -338,13 +474,17 @@ body {
         width: 100%;
         max-width: 300px;
     }
+    
+    .prophecy-text {
+        padding: 1.5rem;
+    }
 }
 
 /* Animações de entrada */
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(40px);
     }
     to {
         opacity: 1;
@@ -355,10 +495,10 @@ body {
 .state.active .prophecy-container,
 .state.active .code-container,
 .state.active .error-container {
-    animation: fadeInUp 0.6s ease-out;
+    animation: fadeInUp 0.8s ease-out;
 }
 
-/* Efeitos de background */
+/* Efeitos de background aprimorados */
 body::before {
     content: '';
     position: fixed;
@@ -367,9 +507,17 @@ body::before {
     width: 100%;
     height: 100%;
     background: 
-        radial-gradient(circle at 20% 20%, rgba(144, 238, 144, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(34, 139, 34, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 60% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 30%);
+        radial-gradient(circle at 15% 15%, rgba(144, 238, 144, 0.15) 0%, transparent 60%),
+        radial-gradient(circle at 85% 85%, rgba(34, 139, 34, 0.15) 0%, transparent 60%),
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 40%),
+        radial-gradient(circle at 30% 70%, rgba(144, 238, 144, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 70% 30%, rgba(144, 238, 144, 0.08) 0%, transparent 50%);
     pointer-events: none;
-    z-index: -1;
+    z-index: 0;
+    animation: backgroundShift 20s ease-in-out infinite;
+}
+
+@keyframes backgroundShift {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
 }

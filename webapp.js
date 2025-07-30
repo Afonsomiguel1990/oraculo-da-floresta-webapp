@@ -131,19 +131,30 @@ class ProphcyWebApp {
         document.getElementById('prophecy-text-content').textContent = prophecy.text;
         document.getElementById('prophecy-code-display').textContent = prophecy.short_code;
         
-        // Carregar imagem da profecia
+        // Configurar imagem da profecia
+        const imgContainer = document.querySelector('.prophecy-image-container');
         const img = document.getElementById('prophecy-image');
+        
+        // Mostrar placeholder enquanto carrega
+        this.showImagePlaceholder();
+        
         if (prophecy.story_image_url) {
+            console.log('Carregando imagem:', prophecy.story_image_url);
             img.src = prophecy.story_image_url;
+            img.style.display = 'block';
+            
             img.onload = () => {
+                console.log('Imagem carregada com sucesso');
+                this.hideImagePlaceholder();
                 this.setState(STATES.PROPHECY);
             };
+            
             img.onerror = () => {
-                console.error('Erro ao carregar imagem');
-                this.setState(STATES.PROPHECY); // Mostrar mesmo sem imagem
+                console.error('Erro ao carregar imagem, tentando gerar nova');
+                this.generateProphecyImage(prophecy.id);
             };
         } else {
-            // Se não tiver imagem, gerar uma agora
+            console.log('Sem URL de imagem, gerando nova');
             this.generateProphecyImage(prophecy.id);
         }
         
@@ -151,9 +162,39 @@ class ProphcyWebApp {
         this.updateMetaTags(prophecy);
     }
     
+    // Mostrar placeholder de imagem
+    showImagePlaceholder() {
+        const imgContainer = document.querySelector('.prophecy-image-container');
+        const img = document.getElementById('prophecy-image');
+        
+        // Esconder imagem
+        img.style.display = 'none';
+        
+        // Criar ou mostrar placeholder
+        let placeholder = imgContainer.querySelector('.image-placeholder');
+        if (!placeholder) {
+            placeholder = document.createElement('div');
+            placeholder.className = 'image-placeholder';
+            placeholder.innerHTML = 'Gerando a tua imagem mística...';
+            imgContainer.appendChild(placeholder);
+        }
+        placeholder.style.display = 'flex';
+    }
+    
+    // Esconder placeholder de imagem
+    hideImagePlaceholder() {
+        const imgContainer = document.querySelector('.prophecy-image-container');
+        const placeholder = imgContainer.querySelector('.image-placeholder');
+        if (placeholder) {
+            placeholder.style.display = 'none';
+        }
+    }
+    
     // Gerar imagem da profecia (chamar render-story)
     async generateProphecyImage(prophecyId) {
         try {
+            console.log('Chamando render-story para prophecy_id:', prophecyId);
+            
             const response = await fetch(`${SUPABASE_URL}/functions/v1/render-story`, {
                 method: 'POST',
                 headers: {
@@ -164,19 +205,36 @@ class ProphcyWebApp {
             });
             
             if (!response.ok) {
-                throw new Error('Erro ao gerar imagem');
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
             
             const result = await response.json();
+            console.log('Resposta do render-story:', result);
             
-            // Atualizar imagem
-            const img = document.getElementById('prophecy-image');
-            img.src = result.image_url;
-            
-            this.setState(STATES.PROPHECY);
+            if (result.image_url) {
+                // Atualizar imagem
+                const img = document.getElementById('prophecy-image');
+                img.src = result.image_url;
+                img.style.display = 'block';
+                
+                img.onload = () => {
+                    console.log('Nova imagem carregada com sucesso');
+                    this.hideImagePlaceholder();
+                    this.setState(STATES.PROPHECY);
+                };
+                
+                img.onerror = () => {
+                    console.error('Erro ao carregar nova imagem gerada');
+                    this.hideImagePlaceholder();
+                    this.setState(STATES.PROPHECY);
+                };
+            } else {
+                throw new Error('Resposta não contém image_url');
+            }
             
         } catch (error) {
             console.error('Erro ao gerar imagem:', error);
+            this.hideImagePlaceholder();
             this.setState(STATES.PROPHECY); // Mostrar mesmo sem imagem
         }
     }
