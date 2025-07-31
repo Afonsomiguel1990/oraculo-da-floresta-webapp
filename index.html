@@ -61,25 +61,38 @@
                     <p id="archetype-name"></p>
                 </div>
                 
-                <div class="prophecy-image-container">
-                    <img id="prophecy-image" alt="A tua profecia" />
-                    <div class="image-overlay">
-                        <button id="download-btn" class="action-btn primary">
-                            📱 Guardar Imagem
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Botão para gerar imagem quando não existe -->
-                <div id="generate-image-section" class="generate-section" style="display: none;">
-                    <p class="generate-description">A tua profecia ainda não tem imagem.</p>
-                    <button id="generate-image-btn" class="action-btn primary">
-                        ✨ Gerar Imagem Mística
-                    </button>
-                </div>
-                
-                <div class="prophecy-text">
+                <!-- Profecia Principal -->
+                <div class="prophecy-text-main">
                     <blockquote id="prophecy-text-content"></blockquote>
+                </div>
+                
+                <div class="prophecy-code-main">
+                    <span id="prophecy-code-display"></span>
+                </div>
+                
+                <!-- Logos Patrocinadores -->
+                <div class="sponsors-section">
+                    <div class="sponsors-divider"></div>
+                    <div class="sponsors-logos">
+                        <div class="sponsor-logo">🌲 EcoTech</div>
+                        <div class="sponsor-logo">🔮 MysticAI</div>
+                        <div class="sponsor-logo">🎨 Creative Studio</div>
+                    </div>
+                    <p class="sponsors-text">Uma experiência mística criada por</p>
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="print-btn" class="action-btn primary">
+                        🖨️ Imprimir Profecia
+                    </button>
+                    
+                    <button id="share-btn" class="action-btn secondary">
+                        ✨ Partilhar
+                    </button>
+                    
+                    <button id="new-prophecy-btn" class="action-btn tertiary">
+                        🔮 Nova Profecia
+                    </button>
                 </div>
             </div>
         </div>
@@ -108,5 +121,6 @@
     <canvas id="download-canvas" style="display: none;"></canvas>
     
     <script src="webapp.js"></script>
+    <script src="print.js"></script>
 </body>
 </html>
