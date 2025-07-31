@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#228B22">
+    <title>A Tua Profecia - Oráculo da Floresta</title>
+    <link rel="stylesheet" href="style.css?v=20250131">
+    
+    <!-- Meta tags para partilha nas redes sociais -->
+    <meta property="og:title" content="A Minha Profecia - Oráculo da Floresta">
+    <meta property="og:description" content="Descobri a minha profecia mística na instalação do Oráculo da Floresta">
+    <meta property="og:image" content="">
+    <meta property="og:type" content="website">
+    
+    <!-- Meta tags para iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+    <div id="app">
+        <!-- Loading State -->
+        <div id="loading-state" class="state active">
+            <div class="loading-container">
+                <div class="mystical-loader">
+                    <div class="leaf-spinner"></div>
+                </div>
+                <h2>Carregando a tua profecia...</h2>
+            </div>
+        </div>
+        
+        <!-- Code Input State (se alguém acedera via código) -->
+        <div id="code-input-state" class="state">
+            <div class="code-container">
+                <div class="header">
+                    <h1>🌲 Oráculo da Floresta</h1>
+                    <p>Introduz o teu código para aceder à profecia</p>
+                </div>
+                
+                <div class="code-input-form">
+                    <input type="text" 
+                           id="code-input" 
+                           placeholder="Ex: FOLHA-42" 
+                           autocomplete="off"
+                           maxlength="12">
+                    <button id="find-prophecy-btn">Encontrar Profecia</button>
+                </div>
+                
+                <div class="code-instructions">
+                    <p>O código está no ecrã da instalação</p>
+                    <p>Formato: ARQUÉTIPO-NÚMERO</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Prophecy Display State -->
+        <div id="prophecy-state" class="state">
+            <div class="prophecy-container">
+                <div class="prophecy-header">
+                    <h1>A Tua Profecia</h1>
+                    <p id="archetype-name"></p>
+                </div>
+                
+                <!-- Profecia Principal -->
+                <div class="prophecy-text-main">
+                    <blockquote id="prophecy-text-content"></blockquote>
+                </div>
+                
+                <div class="prophecy-code-main">
+                    <span id="prophecy-code-display"></span>
+                </div>
+                
+                <!-- Logos Patrocinadores -->
+                <div class="sponsors-section">
+                    <div class="sponsors-divider"></div>
+                    <div class="sponsors-logos">
+                        <div class="sponsor-logo">🌲 EcoTech</div>
+                        <div class="sponsor-logo">🔮 MysticAI</div>
+                        <div class="sponsor-logo">🎨 Creative Studio</div>
+                    </div>
+                    <p class="sponsors-text">Uma experiência mística criada por</p>
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="print-btn" class="action-btn primary">
+                        🖨️ Imprimir Profecia
+                    </button>
+                    
+                    <button id="share-btn" class="action-btn secondary">
+                        ✨ Partilhar
+                    </button>
+                    
+                    <button id="new-prophecy-btn" class="action-btn tertiary">
+                        🔮 Nova Profecia
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Error State -->
+        <div id="error-state" class="state">
+            <div class="error-container">
+                <div class="error-icon">🌲</div>
+                <h2>Oops! Algo correu mal</h2>
+                <p id="error-message">Não conseguimos encontrar a tua profecia.</p>
+                
+                <button id="retry-btn" class="action-btn primary">
+                    Tentar Novamente
+                </button>
+                
+                <div class="back-to-input">
+                    <button id="back-to-input-btn" class="text-btn">
+                        ← Introduzir outro código
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hidden canvas para download de imagens -->
+    <canvas id="download-canvas" style="display: none;"></canvas>
+    
+    <script src="webapp.js?v=20250131"></script>
+    <script src="print.js?v=20250131"></script>
+</body>
+</html>
