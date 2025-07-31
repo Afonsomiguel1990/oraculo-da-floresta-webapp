@@ -1,191 +1,185 @@
-// Configuração
+// Configuração Supabase
 const SUPABASE_URL = 'https://bnaklbyemcijyabcfjhx.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJuYWtsYnllbWNpanlhYmNmamh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM4NjAwODksImV4cCI6MjA2OTQzNjA4OX0.MOds9hnUVD87Gm-J-gIGWWcRDj6p2X0AKRpaZ2Yqx0Q';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJuYWtsYnllbWNpanlhYmNmamh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM4NjAwODksImV4cCI6MjA2OTQzNjA4OX0.MOds9hnUVD87Gm-J-gIGWWcRDj6p2X0AKRpaZ2Yqx0Q';
 
-// Estados da aplicação
-const STATES = {
-    LOADING: 'loading',
-    CODE_INPUT: 'code-input', 
-    PROPHECY: 'prophecy',
-    ERROR: 'error'
-};
-
-class ProphcyWebApp {
+// App Class
+class OracleApp {
     constructor() {
-        this.currentState = STATES.LOADING;
         this.currentProphecy = null;
-        
-        this.initEventListeners();
-        this.checkURL();
-        
-        console.log('Webapp inicializada');
+        this.init();
     }
     
-    // Verificar URL para session_id ou mostrar input de código
+    init() {
+        console.log('🌲 Oráculo da Floresta iniciado');
+        this.setupEventListeners();
+        this.checkURL();
+    }
+    
+    // Verificar URL e decidir ecrã inicial
     checkURL() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const sessionId = urlParams.get('s');
-        const prophecyId = urlParams.get('id');
+        const params = new URLSearchParams(window.location.search);
+        const sessionId = params.get('s');
+        const prophecyId = params.get('id');
         
         if (sessionId) {
-            this.loadProphecyBySession(sessionId);
+            this.loadBySession(sessionId);
         } else if (prophecyId) {
-            this.loadProphecyById(prophecyId);
+            this.loadById(prophecyId);
         } else {
-            // CRÍTICO: Ir para código input, NÃO ficar em loading
-            this.setState(STATES.CODE_INPUT);
+            // MOSTRAR CÓDIGO INPUT (não loading!)
+            this.showScreen('code');
         }
     }
     
-    // Carregar profecia por session_id
-    async loadProphecyBySession(sessionId) {
+    // Event Listeners
+    setupEventListeners() {
+        // Buscar profecia
+        document.getElementById('search-btn').addEventListener('click', () => {
+            this.searchProphecy();
+        });
+        
+        // Enter no input
+        document.getElementById('code-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.searchProphecy();
+            }
+        });
+        
+        // Auto-format input
+        document.getElementById('code-input').addEventListener('input', (e) => {
+            e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, '');
+        });
+        
+        // Ações na profecia
+        document.getElementById('share-btn').addEventListener('click', () => this.share());
+        document.getElementById('new-btn').addEventListener('click', () => this.newProphecy());
+        
+        // Erro
+        document.getElementById('retry-btn').addEventListener('click', () => this.checkURL());
+        document.getElementById('back-btn').addEventListener('click', () => this.showScreen('code'));
+    }
+    
+    // Buscar profecia por código
+    async searchProphecy() {
+        const code = document.getElementById('code-input').value.trim();
+        
+        if (!code) {
+            alert('Introduz um código');
+            return;
+        }
+        
+        this.showScreen('loading');
+        
+        try {
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/prophecies?short_code=eq.${code}&select=*`, {
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.length === 0) {
+                throw new Error(`Código "${code}" não encontrado`);
+            }
+            
+            this.displayProphecy(data[0]);
+            
+        } catch (error) {
+            console.error('Erro:', error);
+            this.showError(error.message);
+        }
+    }
+    
+    // Carregar por session_id
+    async loadBySession(sessionId) {
+        this.showScreen('loading');
+        
         try {
             const response = await fetch(`${SUPABASE_URL}/rest/v1/prophecies?session_id=eq.${sessionId}&select=*`, {
                 headers: {
-                    'apikey': SUPABASE_ANON_KEY,
-                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`
                 }
             });
             
-            if (!response.ok) {
+            const data = await response.json();
+            
+            if (data.length === 0) {
                 throw new Error('Profecia não encontrada');
             }
             
-            const prophecies = await response.json();
-            
-            if (prophecies.length === 0) {
-                throw new Error('Profecia não encontrada');
-            }
-            
-            this.displayProphecy(prophecies[0]);
+            this.displayProphecy(data[0]);
             
         } catch (error) {
-            console.error('Erro ao carregar profecia:', error);
-            this.showError('Não conseguimos encontrar a tua profecia.');
+            this.showError(error.message);
         }
     }
     
-    // Carregar profecia por ID direto
-    async loadProphecyById(prophecyId) {
+    // Carregar por ID
+    async loadById(prophecyId) {
+        this.showScreen('loading');
+        
         try {
             const response = await fetch(`${SUPABASE_URL}/rest/v1/prophecies?id=eq.${prophecyId}&select=*`, {
                 headers: {
-                    'apikey': SUPABASE_ANON_KEY,
-                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`
                 }
             });
             
-            if (!response.ok) {
+            const data = await response.json();
+            
+            if (data.length === 0) {
                 throw new Error('Profecia não encontrada');
             }
             
-            const prophecies = await response.json();
-            
-            if (prophecies.length === 0) {
-                throw new Error('Profecia não encontrada');
-            }
-            
-            this.displayProphecy(prophecies[0]);
+            this.displayProphecy(data[0]);
             
         } catch (error) {
-            console.error('Erro ao carregar profecia:', error);
-            this.showError('Não conseguimos encontrar a tua profecia.');
+            this.showError(error.message);
         }
     }
     
-    // Carregar profecia por código curto
-    async loadProphecyByCode(shortCode) {
-        this.setState(STATES.LOADING);
-        
-        try {
-            const response = await fetch(`${SUPABASE_URL}/rest/v1/prophecies?short_code=eq.${shortCode.toUpperCase()}&select=*`, {
-                headers: {
-                    'apikey': SUPABASE_ANON_KEY,
-                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-                }
-            });
-            
-            if (!response.ok) {
-                throw new Error('Profecia não encontrada');
-            }
-            
-            const prophecies = await response.json();
-            
-            if (prophecies.length === 0) {
-                throw new Error('Código não encontrado');
-            }
-            
-            this.displayProphecy(prophecies[0]);
-            
-        } catch (error) {
-            console.error('Erro ao carregar profecia:', error);
-            this.showError(`Código "${shortCode}" não encontrado. Verifica se está correto.`);
-        }
-    }
-    
-    // Mostrar profecia na interface - SEM IMAGENS
+    // Mostrar profecia
     displayProphecy(prophecy) {
         this.currentProphecy = prophecy;
         
-        // Atualizar elementos da interface
-        document.getElementById('archetype-name').textContent = `Arquétipo: ${prophecy.archetype}`;
-        document.getElementById('prophecy-text-content').textContent = prophecy.text;
-        document.getElementById('prophecy-code-display').textContent = prophecy.short_code;
+        // Preencher dados
+        document.getElementById('archetype').textContent = `Arquétipo: ${prophecy.archetype}`;
+        document.getElementById('prophecy-text').textContent = prophecy.text;
+        document.getElementById('prophecy-code').textContent = prophecy.short_code;
         
-        // Atualizar meta tags para partilha
-        this.updateMetaTags(prophecy);
-        
-        // DIRETO para profecia - SEM esperar imagens
-        this.setState(STATES.PROPHECY);
-    }
-    
-    // Atualizar meta tags para partilha
-    updateMetaTags(prophecy) {
-        // Atualizar título
+        // Atualizar meta tags
         document.title = `${prophecy.archetype} - Oráculo da Floresta`;
         
-        // Atualizar meta tags Open Graph
-        const ogTitle = document.querySelector('meta[property="og:title"]');
-        const ogDescription = document.querySelector('meta[property="og:description"]');
-        const ogImage = document.querySelector('meta[property="og:image"]');
-        
-        if (ogTitle) ogTitle.content = `A Minha Profecia: ${prophecy.archetype}`;
-        if (ogDescription) ogDescription.content = prophecy.text;
-        if (ogImage && prophecy.story_image_url) ogImage.content = prophecy.story_image_url;
-    }
-    
-    // Mudar estado da interface
-    setState(newState) {
-        if (this.currentState === newState) return;
-        
-        console.log(`Mudando estado: ${this.currentState} -> ${newState}`);
-        
-        // Esconder estado atual
-        const currentStateElement = document.getElementById(`${this.currentState}-state`);
-        if (currentStateElement) {
-            currentStateElement.classList.remove('active');
-        }
-        
-        // Mostrar novo estado
-        const newStateElement = document.getElementById(`${newState}-state`);
-        if (newStateElement) {
-            newStateElement.classList.add('active');
-        }
-        
-        this.currentState = newState;
+        // Mostrar ecrã
+        this.showScreen('prophecy');
     }
     
     // Mostrar erro
     showError(message) {
         document.getElementById('error-message').textContent = message;
-        this.setState(STATES.ERROR);
+        this.showScreen('error');
     }
     
-    // Partilhar profecia
-    async shareProphecy() {
+    // Mudar ecrã
+    showScreen(screenName) {
+        // Esconder todos
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        
+        // Mostrar o correto
+        document.getElementById(`${screenName}-screen`).classList.add('active');
+        
+        console.log(`📱 Ecrã: ${screenName}`);
+    }
+    
+    // Partilhar
+    async share() {
         if (!this.currentProphecy) return;
         
-        const shareData = {
+        const data = {
             title: `A Minha Profecia: ${this.currentProphecy.archetype}`,
             text: this.currentProphecy.text,
             url: window.location.href
@@ -193,71 +187,29 @@ class ProphcyWebApp {
         
         try {
             if (navigator.share) {
-                await navigator.share(shareData);
+                await navigator.share(data);
             } else {
-                // Fallback para browsers sem Web Share API
-                const text = `${shareData.title}\n\n${shareData.text}\n\n${shareData.url}`;
+                const text = `${data.title}\n\n${data.text}\n\n${data.url}`;
                 await navigator.clipboard.writeText(text);
-                alert('Link copiado para a clipboard!');
+                alert('Link copiado!');
             }
         } catch (error) {
-            console.error('Erro ao partilhar:', error);
-            // Fallback final
-            const text = `${shareData.title}\n\n${shareData.text}\n\n${shareData.url}`;
-            prompt('Copia este texto para partilhar:', text);
+            const text = `${data.title}\n\n${data.text}\n\n${data.url}`;
+            prompt('Copia este texto:', text);
         }
     }
     
-    // Event listeners - SEM referências a elementos inexistentes
-    initEventListeners() {
-        // Botão para encontrar profecia por código
-        document.getElementById('find-prophecy-btn').addEventListener('click', () => {
-            const code = document.getElementById('code-input').value.trim();
-            if (code) {
-                this.loadProphecyByCode(code);
-            }
-        });
-        
-        // Enter no input de código
-        document.getElementById('code-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                const code = e.target.value.trim();
-                if (code) {
-                    this.loadProphecyByCode(code);
-                }
-            }
-        });
-        
-        // Auto-formatar input de código
-        document.getElementById('code-input').addEventListener('input', (e) => {
-            let value = e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, '');
-            e.target.value = value;
-        });
-        
-        // Botão de partilha
-        document.getElementById('share-btn').addEventListener('click', () => {
-            this.shareProphecy();
-        });
-        
-        // Botão "Nova Profecia"
-        document.getElementById('new-prophecy-btn').addEventListener('click', () => {
-            window.location.href = window.location.pathname; // Recarregar sem parâmetros
-        });
-        
-        // Botão "Tentar Novamente"
-        document.getElementById('retry-btn').addEventListener('click', () => {
-            this.checkURL();
-        });
-        
-        // Botão "Voltar ao input"
-        document.getElementById('back-to-input-btn').addEventListener('click', () => {
-            this.setState(STATES.CODE_INPUT);
-        });
+    // Nova profecia
+    newProphecy() {
+        // Limpar input
+        document.getElementById('code-input').value = '';
+        // Voltar ao início
+        this.showScreen('code');
     }
 }
 
-// Inicializar quando a página carregar
+// Inicializar app
 document.addEventListener('DOMContentLoaded', () => {
-    window.prophcyApp = new ProphcyWebApp();
-    console.log('✅ App iniciada - deve mostrar CODE INPUT primeiro!');
+    window.oracleApp = new OracleApp();
+    console.log('✅ App pronta - deve mostrar campo código!');
 });

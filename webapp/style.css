@@ -1,0 +1,337 @@
+/* RESET & BASE */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1a5a3e 0%, #2d5016 50%, #1a3a2e 100%);
+    color: white;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* LAYOUT GERAL */
+#app {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    background: inherit;
+}
+
+.screen.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.container {
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+}
+
+/* CÓDIGO INPUT SCREEN */
+#code-screen .header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #90EE90;
+    text-shadow: 0 2px 10px rgba(144, 238, 144, 0.3);
+}
+
+#code-screen .header p {
+    font-size: 1.2rem;
+    margin-bottom: 3rem;
+    opacity: 0.9;
+}
+
+.input-section {
+    margin-bottom: 2rem;
+}
+
+#code-input {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    font-size: 1.5rem;
+    text-align: center;
+    border: 2px solid #90EE90;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+#code-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+#code-input:focus {
+    outline: none;
+    border-color: #98FB98;
+    box-shadow: 0 0 20px rgba(144, 238, 144, 0.4);
+}
+
+#search-btn {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #90EE90, #98FB98);
+    color: #1a5a3e;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#search-btn:hover {
+    background: linear-gradient(135deg, #98FB98, #90EE90);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(144, 238, 144, 0.3);
+}
+
+.help {
+    opacity: 0.7;
+    font-size: 0.9rem;
+}
+
+.help p {
+    margin: 0.5rem 0;
+}
+
+/* LOADING SCREEN */
+#loading-screen h2 {
+    margin-top: 2rem;
+    font-size: 1.5rem;
+    color: #90EE90;
+}
+
+.loader {
+    margin-bottom: 1rem;
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(144, 238, 144, 0.3);
+    border-top: 4px solid #90EE90;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* PROFECIA SCREEN */
+.prophecy-header h1 {
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+    color: #90EE90;
+}
+
+.prophecy-header p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    opacity: 0.8;
+}
+
+.prophecy-content {
+    margin: 2rem 0;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    border-left: 6px solid #90EE90;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.prophecy-content blockquote {
+    font-size: 1.3rem;
+    line-height: 1.6;
+    font-style: italic;
+    color: #E8F5E8;
+}
+
+.prophecy-code {
+    margin: 2rem 0;
+    padding: 1rem;
+    background: rgba(144, 238, 144, 0.2);
+    border-radius: 10px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: 3px;
+    color: #90EE90;
+}
+
+/* PATROCINADORES */
+.sponsors {
+    margin: 3rem 0 2rem 0;
+}
+
+.sponsors-divider {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #90EE90, transparent);
+    margin: 2rem 0 1.5rem 0;
+}
+
+.sponsors-logos {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.sponsors-logos .logo {
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    font-size: 0.9rem;
+    border: 1px solid rgba(144, 238, 144, 0.3);
+}
+
+.sponsors p {
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+/* BOTÕES */
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn {
+    padding: 1rem;
+    border: none;
+    border-radius: 15px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn.primary {
+    background: linear-gradient(135deg, #90EE90, #98FB98);
+    color: #1a5a3e;
+}
+
+.btn.secondary {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid #90EE90;
+}
+
+.btn.tertiary {
+    background: transparent;
+    color: #90EE90;
+    border: 1px solid #90EE90;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn.primary:hover {
+    background: linear-gradient(135deg, #98FB98, #90EE90);
+}
+
+.btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.btn.tertiary:hover {
+    background: rgba(144, 238, 144, 0.1);
+}
+
+/* ERROR SCREEN */
+.error-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+#error-screen h2 {
+    color: #FFB6C1;
+    margin-bottom: 1rem;
+}
+
+#error-screen p {
+    margin-bottom: 2rem;
+    opacity: 0.8;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    #code-screen .header h1 {
+        font-size: 2rem;
+    }
+    
+    .prophecy-content blockquote {
+        font-size: 1.1rem;
+    }
+    
+    .sponsors-logos {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+/* PRINT STYLES */
+@media print {
+    body {
+        background: white !important;
+        color: #2d5016 !important;
+    }
+    
+    .screen:not(#prophecy-screen) {
+        display: none !important;
+    }
+    
+    #prophecy-screen {
+        position: static !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+    
+    .actions {
+        display: none !important;
+    }
+    
+    .prophecy-content {
+        background: #f8f8f8 !important;
+        border-left: 6px solid #2d5016 !important;
+        color: #2d5016 !important;
+    }
+    
+    .prophecy-code {
+        background: #e8f5e8 !important;
+        color: #2d5016 !important;
+    }
+}
