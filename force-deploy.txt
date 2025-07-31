@@ -1,0 +1,3 @@
+Force deploy timestamp: 2025-01-31T00:17:00Z
+Reason: Clear Vercel cache to apply webapp.js fixes
+Status: Webapp should now show code input first, then loading, then prophecy
