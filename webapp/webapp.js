@@ -32,6 +32,7 @@ class ProphcyWebApp {
         } else if (prophecyId) {
             this.loadProphecyById(prophecyId);
         } else {
+            // CRÍTICO: Ir para código input, NÃO ficar em loading
             this.setState(STATES.CODE_INPUT);
         }
     }
@@ -122,7 +123,7 @@ class ProphcyWebApp {
         }
     }
     
-    // Mostrar profecia na interface
+    // Mostrar profecia na interface - SEM IMAGENS
     displayProphecy(prophecy) {
         this.currentProphecy = prophecy;
         
@@ -134,7 +135,7 @@ class ProphcyWebApp {
         // Atualizar meta tags para partilha
         this.updateMetaTags(prophecy);
         
-        // Ir diretamente para o estado de profecia (sem imagem)
+        // DIRETO para profecia - SEM esperar imagens
         this.setState(STATES.PROPHECY);
     }
     
@@ -207,7 +208,7 @@ class ProphcyWebApp {
         }
     }
     
-    // Event listeners
+    // Event listeners - SEM referências a elementos inexistentes
     initEventListeners() {
         // Botão para encontrar profecia por código
         document.getElementById('find-prophecy-btn').addEventListener('click', () => {
@@ -258,4 +259,5 @@ class ProphcyWebApp {
 // Inicializar quando a página carregar
 document.addEventListener('DOMContentLoaded', () => {
     window.prophcyApp = new ProphcyWebApp();
+    console.log('✅ App iniciada - deve mostrar CODE INPUT primeiro!');
 });
